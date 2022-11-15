@@ -1,0 +1,10 @@
+Options -Indexes
+
+RewriteEngine On
+
+php_flag display_errors On
+
+<Files "BOT_KEY">
+  Order Allow,Deny
+  Deny from all
+</Files>

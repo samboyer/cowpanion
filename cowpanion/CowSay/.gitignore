@@ -1,0 +1,9 @@
+composer.phar
+.DS_Store
+.idea
+nbproject
+vendor
+clover.xml
+composer.lock
+.phpunit.result.cache
+coverage
