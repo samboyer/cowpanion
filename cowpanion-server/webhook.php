@@ -1,11 +1,13 @@
 <?php
 // ----------------------------------------------------------------------------
-// webhook.php - Cowpanion message webhook handler
+// webhook.php - Webex cowpanion message webhook handler
 //
 // November 2022, Sam Boyer
 // ----------------------------------------------------------------------------
 
 ini_set('error_reporting', E_ALL);
+ini_set("log_errors", TRUE);
+ini_set('error_log', 'errors.log');
 
 // Imports
 foreach (glob("CowSay/src/Traits/*.php") as $filename) require_once($filename);
@@ -13,9 +15,14 @@ foreach (glob("CowSay/src/Core/*.php") as $filename) require_once($filename);
 require_once("CowSay/src/Carcases/Cow.php");
 use CowSay\Cow;
 
+require_once("Eliza/src/Eliza.php");
+
 
 // == Config ==
 $DEBUG_RECIPIENT = 'saboyer@cisco.com';
+
+// If TEST_MODE is on, only messages sent by the DEBUG_RECIPIENT will be handled.
+$TEST_MODE = true;
 
 $COWPANION_KEY = file_get_contents("BOT_KEY");
 $COWPANION_ID = 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS81ZjkzZDg5Yy02YWJkLTQ3NWYtOTU3ZS01NTc3ZTBkNDc2MTc';
@@ -139,51 +146,57 @@ function send_hint($recipient) {
 }
 
 
-// test
-// $resp = send_message("this_email_doesnt_exist@samboyer.uk", 'hello');
-// if (property_exists($resp, 'errors') && count($resp->{'errors'}) > 0) {
-//     echo "error found\n";
-//     echo $resp->{'errors'}[0]->{'description'};
-// }
-// exit();
-
-// $re_mention = '/<spark-mention data-object-type="\w+" data-object-id="(\w+)">[^<]+<\/spark-mention>\s*/'
-
-
 
 
 // == Main path ==
+
 $notif_body = json_decode(file_get_contents('php://input'));
 
+if (!is_object($notif_body)) {
+    exit();
+}
+
 $sender_email = $notif_body->{'data'}->{'personEmail'};
+
 if ($sender_email == 'cowpanion@webex.bot') {
     exit();
 }
 
 $msg_info = get_message_info($notif_body->{'data'}->{'id'});
-debug_log_message_info($msg_info);
-
 $is_dm = ($msg_info->{'roomType'} === 'direct');
-
 $msg_text = $msg_info->{'text'};
-
 $msg_words = explode(' ',
-str_replace("\n", ' ',
-preg_replace('/ +/',' ', $msg_text)
-)
+    str_replace("\n", ' ',
+        preg_replace('/ +/',' ', $msg_text)
+    )
 );
+
+// debug_log_message_info($msg_info);
+
+if ($TEST_MODE && $sender_email !== $DEBUG_RECIPIENT) {
+    exit();
+}
 
 
 // If the first word is a tag of the bot, strip it
 $bot_mentioned = false;
-foreach ($msg_info->{'mentionedPeople'} as $person_id) {
-    if ($person_id === $COWPANION_ID) {
-        $bot_mentioned = true;
+if (property_exists($msg_info, 'mentionedPeople')) {
+    foreach ($msg_info->{'mentionedPeople'} as $person_id) {
+        if ($person_id === $COWPANION_ID) {
+            $bot_mentioned = true;
+        }
     }
 }
 
 if ($bot_mentioned && !$is_dm && $msg_words[0] == 'cowpanion') {
+    // remove 'cowpanion' from start of message
     $msg_words = array_slice($msg_words, 1);
+    $msg_text = preg_replace(
+        '/\s*cowpanion\s+/',
+        '',
+        $msg_text,
+        1
+    );
 }
 
 // Main command handling
@@ -199,7 +212,6 @@ if ($bot_mentioned || $is_dm) {
     }
     elseif ($msg_words[0] === 'send') {
         $cmd_send_recipient = $msg_words[1];
-
 
         if (preg_match('/^[\w_.+-]+@[\w-]+\.[\w-.]+$/', $cmd_send_recipient) == 1) {
             $message_to_say = preg_replace(
@@ -229,7 +241,15 @@ if ($bot_mentioned || $is_dm) {
         send_usage($sender_email, '');
     }
     else {
-        send_hint($sender_email);
+        if ($is_dm) {
+            // Analyse message with Eliza, send reply
+            $e = new \Crell\Eliza\Eliza();
+            $elizaSays = $e->analyze($msg_text);
+            send_cow_message($sender_email, $elizaSays);
+        }
+        else {
+            send_hint($sender_email);
+        }
     }
 
 }
@@ -237,29 +257,4 @@ else {
     send_hint($sender_email);
 }
 
-
-
-/*
-expected flow (v1)
-
-if cowpanion isn't mentioned, send default message to sender ('moo')
-
-if cowpanion is mentioned,
-    if first word is 'say',
-        echo rest of message within cow
-    elif first word is 'send',
-        if second word is an email address,
-            echo rest of message within cow to recipient
-            if message fails to send,
-                send_error($sender_email, "Failed to send: %s");
-        else send_usage($sender_email, "Invalid recipient");
-
-    else echo usage (within a cow)
-
-==v2==
-
-if cowpanion isn't mentioned, put whole message through eliza, echo cow response
-
-
-*/
 ?>
