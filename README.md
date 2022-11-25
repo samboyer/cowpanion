@@ -21,3 +21,9 @@ list.
 ## Installation (server)
 
 WIP
+
+## Contributing
+
+Cowpanion is under extremely active 🔥hardcore🔥 development! If you have any
+cool ideas for new features (serious ideas only 😠😠😠), raise an issue or
+submit a PR.
