@@ -2,12 +2,15 @@
 
 Tested on OSX, but should work on Windows...
 
-## Installation (client)
+## Installation & usage (client)
 
 ```bash
 python3 -m pip install python-cowsay
 python3 cowpanion-client/cowpanion.py
 ```
+
+(You may also need to install tkinter/python-tkinter via homebrew if you have a
+nonstandard python distro.)
 
 ## Configuration (client)
 

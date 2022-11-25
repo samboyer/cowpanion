@@ -19,7 +19,6 @@ hats = """\
 ^🎓^
 ^⛑^
 ^🐄^
-^🐄^
 ^🇫🇷^
 ^🇮🇹^
 ^🇪🇸^
@@ -185,3 +184,5 @@ kickin' in the front seat. sittin' in the back seat. gotta make my mind up, whic
 
 """.splitlines()
 quotes = list(filter(lambda s:s!='', quotes))
+
+# quotes=[""]

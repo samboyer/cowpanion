@@ -22,7 +22,7 @@ require_once("Eliza/src/Eliza.php");
 $DEBUG_RECIPIENT = 'saboyer@cisco.com';
 
 // If TEST_MODE is on, only messages sent by the DEBUG_RECIPIENT will be handled.
-$TEST_MODE = true;
+$TEST_MODE = false;
 
 $COWPANION_KEY = file_get_contents("BOT_KEY");
 $COWPANION_ID = 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS81ZjkzZDg5Yy02YWJkLTQ3NWYtOTU3ZS01NTc3ZTBkNDc2MTc';
@@ -171,7 +171,7 @@ $msg_words = explode(' ',
     )
 );
 
-// debug_log_message_info($msg_info);
+debug_log_message_info($msg_info);
 
 if ($TEST_MODE && $sender_email !== $DEBUG_RECIPIENT) {
     exit();
