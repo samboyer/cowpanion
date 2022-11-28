@@ -20,6 +20,7 @@ require_once("Eliza/src/Eliza.php");
 
 // == Config ==
 $DEBUG_RECIPIENT = 'saboyer@cisco.com';
+$DEBUG_MESSAGE_ON_HOOK = false;
 
 // If TEST_MODE is on, only messages sent by the DEBUG_RECIPIENT will be handled.
 $TEST_MODE = false;
@@ -50,7 +51,9 @@ function debug_log_message_info($msg_info) {
     $msg_ts = $msg_info->{'created'};
     $dbg_msg = "[DEBUG] $sender_email ($msg_ts): $msg_text\n";
 
-    send_debug_message($dbg_msg);
+    if ($DEBUG_MESSAGE_ON_HOOK) {
+        send_debug_message($dbg_msg);
+    }
 
     $fp = fopen('webhook.log','a');
     fwrite($fp, $dbg_msg);
