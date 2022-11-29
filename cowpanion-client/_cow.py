@@ -87,12 +87,12 @@ class Cow():
 
         # window.config(highlightthickness=5)
 
-        cowstr = _ascii_cow.apply_hat(_ascii_cow.base_cow, cow_config['hat'])
+        cowstr = _ascii_cow.base_cow
 
         self.tk_text_id_cow = canvas.create_text(
             0,
             0,
-            text=cowstr,
+            text=_ascii_cow.apply_hat(cowstr, cow_config['hat']),
             font=(
                 cow_config['fontFamily'],
                 cow_config['fontSize'],
@@ -258,15 +258,9 @@ class Cow():
                         else cowstr)
 
             elif self.state == 'lie' or self.state == 'talk_lie':
-                cowstr = _ascii_cow.apply_hat(
-                    _ascii_cow.base_cow_lying,
-                    self.config['hat']
-                )
+                cowstr = _ascii_cow.base_cow_lying
             elif self.state == 'eat_grass':
-                cowstr = _ascii_cow.apply_hat(
-                    _ascii_cow.base_cow_eat(frame//ANIM_FRAMES_PER_FRAME),
-                    self.config['hat']
-                )
+                cowstr = _ascii_cow.base_cow_eat(frame//ANIM_FRAMES_PER_FRAME)
 
             if self.state == 'talk' or self.state =='talk_lie':
                 talk_i += TALK_CHARS_PER_FRAME
@@ -283,11 +277,11 @@ class Cow():
                 elif talk_i < len(self.message_to_say):
                     self.frames_until_next_state +=1 # so message gets to finish.
 
-
             if self.is_flipped:
                 cowstr = _ascii_cow.flip(cowstr)
-            self.tk_canvas.itemconfigure(self.tk_text_id_cow, text=cowstr)
-
+            self.tk_canvas.itemconfigure(
+                self.tk_text_id_cow,
+                text=_ascii_cow.apply_hat(cowstr, self.config['hat']))
 
             self.frames_until_next_state -=1
             if self.frames_until_next_state == 0 and not self.is_being_dragged:
