@@ -1,9 +1,14 @@
-
-
+import os
 import subprocess
 import tkinter as tk
 
 from typing import Tuple
+
+TK_WINDOWS_BG_COLOR = 'white'
+
+
+def is_osx():
+    return os.name == 'posix'
 
 
 def get_screen_coords_of_window(window)->Tuple[str, int,int]:
@@ -20,12 +25,23 @@ def create_tk_window(root) -> tk.Tk:
     root.overrideredirect(True)
     # Make the root window always on top
     root.wm_attributes("-topmost", True)
-    # Turn off the window shadow
-    root.wm_attributes("-transparent", True)
-    # Set the root window background color to a transparent color
-    root.config(bg='systemTransparent')
-    # hide from taskbar
-    root.wm_attributes("-type", 'toolsip')
+
+    if is_osx():
+        ### OSX TRANSPARENCY
+        # Turn off the window shadow
+        root.wm_attributes("-transparent", True)
+        # Set the root window background color to a transparent color
+        root.config(bg='systemTransparent')
+        # hide from taskbar
+        root.wm_attributes("-type", 'toolsip')
+    else:
+        ### WINDOWS TRANSPARENCY
+        # Windows TK transparent masking looks ugly, so i'm just gonna leave it
+        # opaque for now.
+
+        # root.wm_attributes("-transparentcolor", TK_WINDOWS_TRANSPARENT_COLOR)
+        root.config(bg=TK_WINDOWS_BG_COLOR)
+
     return root
 
 def run_cowsay(msg:str)->str:

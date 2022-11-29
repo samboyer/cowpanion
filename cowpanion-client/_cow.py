@@ -57,7 +57,7 @@ class Cow():
         # declaring the speech canvas before the cow canvas so it doesn't draw over it:)
         self.tk_canvas_speech = tk.Canvas(
             window,
-            bg='systemTransparent',
+            bg='systemTransparent' if _utils.is_osx() else _utils.TK_WINDOWS_BG_COLOR,
             width=0,
             height=0,
             highlightthickness=0,
@@ -79,7 +79,7 @@ class Cow():
         # COW CANVAS
         canvas = tk.Canvas(
             window,
-            bg='systemTransparent',
+            bg='systemTransparent' if _utils.is_osx() else _utils.TK_WINDOWS_BG_COLOR,
             width=100,
             height=100,
             highlightthickness=0,
