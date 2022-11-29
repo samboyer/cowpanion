@@ -1,8 +1,14 @@
 # Cowpanion - helpful cow-based desktop companion & Webex bot
 
-Tested on OSX, but should work on Windows...
+((demo GIF here))
+
+Works on OSX and Windows*!
+
+(*Tk windows on Windows don't support the same transparency options as on OSX, so until I move to a new GUI framework, cows have an opaque background. Not the worst thing tbh.)
 
 ## Installation & usage (client)
+
+python-cowsay requires python >= 3.8, so this program does too. I could probably drop the dependency since it's only being used for the speech bubble.
 
 ```bash
 python3 -m pip install python-cowsay
