@@ -161,13 +161,15 @@ class Cow():
         def release(e):
             self.is_being_dragged = False
             self.frames_until_next_state = 5
+            self.resize_window()
 
             # canvas.itemconfigure(text_id, text=cowstr)
 
 
-        canvas.bind("<ButtonPress-1>", click)
-        canvas.bind("<B1-Motion>", drag)
-        canvas.bind('<ButtonRelease-1>', release)
+        window.bind("<ButtonPress-1>", click)
+        window.bind("<B1-Motion>", drag)
+        window.bind('<ButtonRelease-1>', release)
+
 
         self.tk_canvas = canvas
         self.cowstr = cowstr
@@ -176,7 +178,7 @@ class Cow():
 
     last_extra_y = 0
 
-    def resize_window(self, extra_x=0, extra_y=0):
+    def resize_window(self, min_width=0, extra_y=0):
         # bounds = self.tk_canvas.bbox(self.tk_text_id_cow)  # returns a tuple like (x1, y1, x2, y2)
         # print(bounds)
         cow_width = self.tk_canvas.winfo_reqwidth()
@@ -189,8 +191,10 @@ class Cow():
         else:
             y_offset = self.last_extra_y
 
+        cow_width = max(cow_width,min_width)
+
         self.cow_window.geometry("%dx%d+%d+%d" % (
-            cow_width+extra_x,
+            cow_width,
             cow_height+extra_y,
             wx,
             wy+ y_offset
@@ -313,7 +317,10 @@ class Cow():
                     msg_width = bounds[2] - bounds[0]
                     msg_height = bounds[3] - bounds[1]
                     self.tk_canvas_speech.config(width=msg_width,height=msg_height)
-                    self.resize_window(extra_x = msg_width+50, extra_y = msg_height) #extra x padding is because some of the truncated messages actually have longer speecy bubbles than the originals
+                    self.resize_window(
+                        min_width = msg_width + 50,  #extra x padding is because some of the truncated messages actually have longer speecy bubbles than the originals
+                        extra_y = msg_height
+                    )
                     self.tk_canvas_speech.itemconfigure(self.tk_text_id_speech, text='')
                 else:
                     self.resize_window()
