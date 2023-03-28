@@ -1,6 +1,10 @@
 # Cowpanion - helpful cow-based desktop companion & Webex bot
 
-((demo GIF here))
+
+
+https://user-images.githubusercontent.com/12173946/228338685-b98a1b4a-5eb7-4bb1-aa96-3f3e089f4633.mp4
+
+
 
 Works on OSX and Windows*!
 
