@@ -1,3 +1,5 @@
+## 🚨 Deprecation notice: cows are so 2022. Check out [sheepanion](https://github.com/samboyer/sheepanion) for fresh bot stuff. 🚨
+
 # Cowpanion - helpful cow-based desktop companion & Webex bot
 
 ((demo GIF here))

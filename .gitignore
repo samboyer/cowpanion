@@ -1,1 +1,3 @@
 *.pyc
+cowpanion-server/*.log
+cowpanion-server/BOT_KEY
