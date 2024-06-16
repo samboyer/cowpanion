@@ -51,9 +51,6 @@ function debug_log_message_info($msg_info) {
     $msg_ts = $msg_info->{'created'};
     $dbg_msg = "[DEBUG] $sender_email ($msg_ts): $msg_text\n";
 
-    if ($DEBUG_MESSAGE_ON_HOOK) {
-        send_debug_message($dbg_msg);
-    }
 
     $fp = fopen('webhook.log','a');
     fwrite($fp, $dbg_msg);
@@ -67,10 +64,21 @@ function debug_log_message_info($msg_info) {
 
 
 //  == Message send/recv ==
-function send_message($recipient, $message_body_markdown) {
-    GLOBAL $COWPANION_KEY;
 
+// Load redirections table
+$REDIRECTIONS = array();
+if (file_exists("email_redirections.json")) {
+    $REDIRECTIONS = json_decode(file_get_contents("email_redirections.json"), true);
+}
+
+function send_message($recipient, $message_body_markdown) {
+    GLOBAL $COWPANION_KEY, $REDIRECTIONS;
     assert(!is_null($message_body_markdown), "empty message");
+
+    // Apply redirection if email exists in redirections table
+    if(array_key_exists($recipient, $REDIRECTIONS)){
+        $recipient = $REDIRECTIONS[$recipient];
+    }
 
     $url = 'https://webexapis.com/v1/messages';
 
